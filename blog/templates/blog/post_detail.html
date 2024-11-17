@@ -9,4 +9,26 @@
     <a href="{% url 'post_update' post.pk %}">Editar</a>
     <a href="{% url 'post_delete' post.pk %}">Deletar</a>
     <a href="{% url 'post_list' %}">Voltar</a>
+    <h2>Comentários:</h2>
+    <ul>
+    {% for comment in post.comments.all %}
+        <li>
+            <strong>{{ comment.author }}</strong> - {{ comment.created_at|date:"d/m/Y H:i" }}
+            <p>{{ comment.text }}</p>
+        </li>
+    {% empty %}
+        <p>Sem comentários ainda. Seja o primeiro a comentar!</p>
+    {% endfor %}
+    </ul>
+    
+    <a href="{% url 'add_comment' post.pk %}">Adicionar comentário</a>
+
+    <form method="post" action="{% url 'add_comment' post.pk %}">
+        {% csrf_token %}
+        <textarea name="text" rows="3" placeholder="Escreva seu comentário aqui..."></textarea>
+        <br>
+        <button type="submit">Comentar</button>
+    </form>
 {% endblock %}
+
+

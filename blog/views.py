@@ -1,8 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-
-# Create your views here.
-
-from .models import Post
+from django.contrib.auth.decorators import login_required
+from .models import Post, Comment
 
 def post_list(request):
     posts = Post.objects.all()
@@ -35,3 +33,12 @@ def post_delete(request, pk):
         post.delete()
         return redirect('post_list')
     return render(request, 'blog/post_confirm_delete.html', {'post': post})
+
+@login_required
+def add_comment(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == "POST":
+        text = request.POST.get('text')  # Recupera o texto do comentário do formulário
+        if text:
+            Comment.objects.create(author=request.user, post=post, text=text)
+        return redirect('post_detail', pk=pk)
